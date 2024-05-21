@@ -1,0 +1,19 @@
+# 参考文档https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
+### 拷贝到浏览器执行，登录github账号，完成授权
+GET https://github.com/login/oauth/authorize?client_id=Ov23ct5Ipo4Ga0sbHNHG&
+    redirect_uri=http://demo.liguanghui.pro/login/oauth2/code/my-oauth-demo&state=4c7f867c-166e-471f-ba57-266634ec43d0
+
+### get access token (code参数替换为上一步获得的授权码，authorization code只能用一次，否则会报bad_verification_code)
+POST https://github.com/login/oauth/access_token
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+client_id=Ov23ct5Ipo4Ga0sbHNHG&client_secret=1da0426c3b173d8180f9f2bc686b16cecf6688d4&redirect_url=http://demo.liguanghui.pro/login/oauth2/code/my-oauth-demo&code=3e091fa4401c09a0c648
+
+> {%
+    client.global.set("access_token", response.body.access_token);
+%}
+
+### get user info
+GET https://api.github.com/user
+Authorization: Bearer {{access_token}}

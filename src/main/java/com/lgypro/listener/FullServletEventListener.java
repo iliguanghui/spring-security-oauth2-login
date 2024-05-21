@@ -2,13 +2,14 @@ package com.lgypro.listener;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FullServletEventListener implements HttpSessionListener, HttpSessionIdListener, HttpSessionAttributeListener,
-    ServletRequestListener, ServletRequestAttributeListener,
-    ServletContextListener, ServletContextAttributeListener {
+        ServletRequestListener, ServletRequestAttributeListener,
+        ServletContextListener, ServletContextAttributeListener {
     // session related
     @Override
     public void sessionCreated(HttpSessionEvent event) {
@@ -30,17 +31,17 @@ public class FullServletEventListener implements HttpSessionListener, HttpSessio
 
     @Override
     public void attributeAdded(HttpSessionBindingEvent event) {
-        System.out.printf("🌽Added attribute '%s' to session '%s', value is %s%n", event.getName(), event.getSession().getId(), event.getValue());
+        System.out.printf("🌽Added attribute '%s' to session '%s', value is %s%n", event.getName(), event.getSession().getId(), stringify(event.getValue()));
     }
 
     @Override
     public void attributeRemoved(HttpSessionBindingEvent event) {
-        System.out.printf("🌽Removed attribute '%s' from session '%s', old value is %s%n", event.getName(), event.getSession().getId(), event.getValue());
+        System.out.printf("🌽Removed attribute '%s' from session '%s', old value is %s%n", event.getName(), event.getSession().getId(), stringify(event.getValue()));
     }
 
     @Override
     public void attributeReplaced(HttpSessionBindingEvent event) {
-        System.out.printf("🌽Replaced attribute '%s' from session '%s', new value is %s%n", event.getName(), event.getSession().getId(), event.getValue());
+        System.out.printf("🌽Replaced attribute '%s' from session '%s', new value is %s%n", event.getName(), event.getSession().getId(), stringify(event.getValue()));
     }
     // request related
 
@@ -56,17 +57,17 @@ public class FullServletEventListener implements HttpSessionListener, HttpSessio
 
     @Override
     public void attributeAdded(ServletRequestAttributeEvent event) {
-        System.out.printf("🫦Added attribute '%s' to request '%s', value is %s%n", event.getName(), requestLine((HttpServletRequest) event.getServletRequest()), event.getValue());
+        System.out.printf("🫦Added attribute '%s' to request '%s', value is %s%n", event.getName(), requestLine((HttpServletRequest) event.getServletRequest()), stringify(event.getValue()));
     }
 
     @Override
     public void attributeRemoved(ServletRequestAttributeEvent event) {
-        System.out.printf("🫦Removed attribute '%s' to request '%s', value is %s%n", event.getName(), requestLine((HttpServletRequest) event.getServletRequest()), event.getValue());
+        System.out.printf("🫦Removed attribute '%s' to request '%s', value is %s%n", event.getName(), requestLine((HttpServletRequest) event.getServletRequest()), stringify(event.getValue()));
     }
 
     @Override
     public void attributeReplaced(ServletRequestAttributeEvent event) {
-        System.out.printf("🫦Replaced attribute '%s' to request '%s', value is %s%n", event.getName(), requestLine((HttpServletRequest) event.getServletRequest()), event.getValue());
+        System.out.printf("🫦Replaced attribute '%s' to request '%s', value is %s%n", event.getName(), requestLine((HttpServletRequest) event.getServletRequest()), stringify(event.getValue()));
     }
 
     // context related
@@ -83,20 +84,27 @@ public class FullServletEventListener implements HttpSessionListener, HttpSessio
 
     @Override
     public void attributeAdded(ServletContextAttributeEvent event) {
-        System.out.printf("🦊Added attribute '%s' to servlet context '%s', value is %s%n", event.getName(), event.getServletContext(), event.getValue());
+        System.out.printf("🦊Added attribute '%s' to servlet context '%s', value is %s%n", event.getName(), event.getServletContext(), stringify(event.getValue()));
     }
 
     @Override
     public void attributeRemoved(ServletContextAttributeEvent event) {
-        System.out.printf("🦊Removed attribute '%s' to servlet context '%s', value is %s%n", event.getName(), event.getServletContext(), event.getValue());
+        System.out.printf("🦊Removed attribute '%s' to servlet context '%s', value is %s%n", event.getName(), event.getServletContext(), stringify(event.getValue()));
     }
 
     @Override
     public void attributeReplaced(ServletContextAttributeEvent event) {
-        System.out.printf("🦊Replaced attribute '%s' to servlet context '%s', value is %s%n", event.getName(), event.getServletContext(), event.getValue());
+        System.out.printf("🦊Replaced attribute '%s' to servlet context '%s', value is %s%n", event.getName(), event.getServletContext(), stringify(event.getValue()));
     }
 
     private static String requestLine(HttpServletRequest request) {
         return request.getMethod() + " " + UrlUtils.buildRequestUrl(request);
+    }
+
+    private static String stringify(Object value) {
+        if (value instanceof ConversionService) {
+            return value.getClass().getName() + "@" + Integer.toHexString(value.hashCode());
+        }
+        return String.valueOf(value);
     }
 }

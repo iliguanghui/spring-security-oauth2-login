@@ -6,7 +6,7 @@
 </head>
 <body>
 <div>
-    <form th:action="@{/login}" method="post">
+    <form action="http://localhost:8080/login" method="post">
         <p>
             <label for="username">Username</label>
             <input type="text" id="username" name="username"/>
@@ -24,6 +24,8 @@
         </div>
     </form>
 </div>
+<a th:href=" @{/oauth2/authorization/my-oauth-demo}">Login with GitHub</a>
+
 </body>
 </html>
 
